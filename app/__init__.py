@@ -1,0 +1,32 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from app.config import Config
+
+
+db = SQLAlchemy()
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
+
+    from app.models import employmentType, experienceLevel, jobTitle, location, role,user, salary
+
+    # Registrar las rutas CRUD
+    from app.routes.user_routes import user_bp
+    from app.routes.employment_type_routes import employment_type_bp
+    from app.routes.experience_level_routes import experience_level_bp
+    from app.routes.job_title_routes import job_title_bp
+    from app.routes.location_routes import location_bp
+    from app.routes.role_routes import role_bp
+    from app.routes.salary_routes import salary_bp
+
+    app.register_blueprint(user_bp, url_prefix='/api/users')
+    app.register_blueprint(employment_type_bp, url_prefix='/api/employmentTypes')
+    app.register_blueprint(experience_level_bp, url_prefix='/api/experienceLevels')
+    app.register_blueprint(job_title_bp, url_prefix='/api/jobTitles')
+    app.register_blueprint(location_bp, url_prefix='/api/locations')
+    app.register_blueprint(role_bp, url_prefix='/api/roles')
+    app.register_blueprint(salary_bp, url_prefix='/api/salaries')
+
+    return app
