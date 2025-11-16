@@ -108,8 +108,11 @@ JOB_TITLE_ALIASES = {
     "MLOps Engineer": "Machine Learning Operations Engineer",
     "Finance Data Analyst": "Financial Data Analyst",
     "BI Analyst": "Business Intelligence Analyst",
+    "BI Data Engineer": "Business Intelligence Data Engineer",
+    "BI Developer": "Business Intelligence Developer",
     "BI Data Analyst": "Business Intelligence Data Analyst",
     "Data Modeller": "Data Modeler",
+    "Data DevOps Engineer": "Data Developer Operations Engineer",
 }
 
 
