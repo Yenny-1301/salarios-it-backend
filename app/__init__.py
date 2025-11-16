@@ -1,16 +1,26 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from app.config import Config
-
 
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # ✅ INICIALIZAR DB UNA SOLA VEZ
     db.init_app(app)
+    
+    # ✅ CONFIGURAR CORS (después de db.init_app)
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200"}})
+    
+    # ❌ ELIMINAR ESTA LÍNEA DUPLICADA:
+    # db.init_app(app)  # ← ESTA SOBRA
 
-    from app.models import employmentType, experienceLevel, jobTitle, location, role,user, salary
+    # ✅ MOVER LOS IMPORTS DE MODELOS dentro del contexto
+    with app.app_context():
+        from app.models import employmentType, experienceLevel, jobTitle, location, role, user, salary
 
     # Registrar las rutas CRUD
     from app.routes.user_routes import user_bp
