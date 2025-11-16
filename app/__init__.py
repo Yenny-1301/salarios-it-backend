@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from app.config import Config
+import os
 
 db = SQLAlchemy()
 
@@ -9,15 +10,24 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
+    # ✅ CONFIGURACIÓN SQLITE CON RUTA ABSOLUTA EXPLÍCITA
+    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    db_path = os.path.join(base_dir, 'data', 'salarios.db')
+    
+    # Asegurar que la carpeta existe
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    print(f"🗄️ Base de datos en: {db_path}")
+    
     # ✅ INICIALIZAR DB UNA SOLA VEZ
     db.init_app(app)
     
     # ✅ CONFIGURAR CORS (después de db.init_app)
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200"}})
     
-    # ❌ ELIMINAR ESTA LÍNEA DUPLICADA:
-    # db.init_app(app)  # ← ESTA SOBRA
-
     # ✅ MOVER LOS IMPORTS DE MODELOS dentro del contexto
     with app.app_context():
         from app.models import employmentType, experienceLevel, jobTitle, location, role, user, salary
