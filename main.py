@@ -1,33 +1,26 @@
-import urllib
+import os
 from app import create_app, db
-from sqlalchemy import create_engine, text
 from app.models.salary import Salary
 from seed_from_excel import seed_from_excel
 
-DATABASE_NAME = "it_salaries"
+print("Configurando base de datos SQLite...")
 
-server_params = urllib.parse.quote_plus(
-    "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=(localdb)\\MSSQLLocalDB;"
-    "Trusted_Connection=yes;"
-)
-server_engine = create_engine(f"mssql+pyodbc:///?odbc_connect={server_params}")
+# Crear carpeta data con ruta absoluta
+base_dir = os.path.abspath(os.path.dirname(__file__))
+data_dir = os.path.join(base_dir, 'data')
+os.makedirs(data_dir, exist_ok=True)
 
-with server_engine.connect() as conn:
-    # ⬇️ ALTERNATIVA MÁS EXPLÍCITA: Desactivar la transacción para este comando
-    conn.execution_options(isolation_level="AUTOCOMMIT").execute(
-        text(f"IF DB_ID('{DATABASE_NAME}') IS NULL CREATE DATABASE [{DATABASE_NAME}]")
-    )
-    # Ya no se necesita conn.commit()
+print(f"Carpeta data creada en: {data_dir}")
 
-print(f"Base de datos '{DATABASE_NAME}' creada o verificada")
-
+# Crear la aplicación
 app = create_app()
 
 with app.app_context():
+    # Crear todas las tablas
     db.create_all()
     print("Tablas creadas correctamente")
     
+    # Verificar si ya hay datos
     salaries_count = Salary.query.count()
     if salaries_count == 0:
         print("Tabla 'salaries' vacía → ejecutando seed_from_excel()...")

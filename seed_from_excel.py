@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from app import db
+from app import create_app, db
 from app.models.employmentType import EmploymentType
 from app.models.experienceLevel import ExperienceLevel
 from app.models.jobTitle import JobTitle
@@ -159,6 +159,18 @@ def get_or_create(model, **kwargs):
 
 def seed_from_excel():
     """
+    Función principal que crea el app context y ejecuta el seed
+    """
+    # Crear la aplicación con configuración SQLite
+    app = create_app()
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/salarios.db'
+    
+    with app.app_context():
+        _seed_from_excel()
+
+
+def _seed_from_excel():
+    """
     Lee el archivo Excel y carga los datos en las tablas:
     EmploymentType, ExperienceLevel, JobTitle, Location y Salary.
 
@@ -290,3 +302,8 @@ def seed_from_excel():
     print(f"Total filas en Excel: {total}")
     print(f"Registros de Salary insertados: {insertados}")
     print(f"Filas saltadas por errores/validación: {saltados}")
+
+
+if __name__ == '__main__':
+    # Para ejecutar el seed directamente
+    seed_from_excel()
