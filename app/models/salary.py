@@ -19,9 +19,9 @@ class Salary(db.Model):
 
     def to_dict(self):
         employment_type = self.employment_type_ref.employment_type if self.employment_type_ref else None
-        job_title = self.job_title_type_ref.employment_type if self.job_title_type_ref else None
-        location = self.location_type_ref.employment_type if self.location_type_ref else None
-        experience_level = self.experience_level_type_ref.employment_type if self.experience_level_type_ref else None
+        job_title = self.job_title_type_ref.job_title if self.job_title_type_ref else None
+        location = self.location_type_ref.location if self.location_type_ref else None
+        experience_level = self.experience_level_type_ref.experience_level if self.experience_level_type_ref else None
 
 
         return {
